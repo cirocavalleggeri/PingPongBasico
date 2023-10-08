@@ -38,7 +38,7 @@ public class GameView extends View {
     float ballX, ballY;
     Velocity velocity = new Velocity(25, 32);
     Handler handler;
-    final long UPDATE_MILLIS = 130;
+    final long UPDATE_MILLIS = 60;
     Runnable runnable;
     Paint textPaint = new Paint();
     Paint healthPaint = new Paint();
@@ -60,6 +60,7 @@ public class GameView extends View {
     Bitmap[] contenitore_ali;
     Bitmap coppia_di_ali;
     MacchinaDaScrivereVecchia macchinaDaScrivereVecchia;
+    boolean unsolopassaggio;
     public GameView(Context context) {
         super(context);
         this.context = context;
@@ -102,6 +103,7 @@ public class GameView extends View {
         sharedPreferences = context.getSharedPreferences("my_pref", 0);
         audioState = sharedPreferences.getBoolean("audioState", true);
         ConvertiLunghezzaStringInPixel.convertiStringLenToPixel("Vel:");
+        unsolopassaggio=true;
        macchinaDaScrivereVecchia=new MacchinaDaScrivereVecchia((Activity)getContext());
 
     }
@@ -170,7 +172,11 @@ public class GameView extends View {
             healthPaint.setColor(Color.RED);
         }
         canvas.drawRect(dWidth-200, 30,dWidth - 200 + 60*life, 80, healthPaint);
-        macchinaDaScrivereVecchia.calcolaLunghezzaRiga("testo da scrivere sempre fino a fine riga",dWidth,canvas);
+        if (unsolopassaggio){
+                macchinaDaScrivereVecchia.update("muovi la barra rossa con il dito  - e cerca di prendere la pallina",dWidth,canvas);
+
+                unsolopassaggio=true;
+        }
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
     private int xVelocity() {

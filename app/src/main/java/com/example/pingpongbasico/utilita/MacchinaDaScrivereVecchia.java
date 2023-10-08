@@ -19,7 +19,11 @@ public class MacchinaDaScrivereVecchia {
     int rigaY;
     int numerorighe;
     String[] righe;
-
+    String tasto1;
+    String tasto;
+    boolean superatariga;
+    int nuovapartenza;
+    int lunghezzatesto;
     public MacchinaDaScrivereVecchia(Context context)  {
 
         this.tastoMacchinaDaScrivere=MediaPlayer.create(context, R.raw.tasto);
@@ -31,29 +35,56 @@ public class MacchinaDaScrivereVecchia {
         rigaY=360;
         numerorighe=0;
         righe=new String[100];
+        tasto1="";
+        tasto="";
+        superatariga=false;
+        nuovapartenza=0;
+        lunghezzatesto=120;
 
     }
-    public void calcolaLunghezzaRiga(String testo ,int massimospazio,Canvas canvas){
 
-     float lunghezzainpixel= ConvertiLunghezzaStringInPixel.convertiStringLenToPixel(testo);
-     if(lunghezzainpixel>massimospazio){
-         String testo1=testo.substring(0,testo.length()/2);
-         String testo2=testo.substring(testo1.length(),testo.length());
-         update(testo,canvas);
-        // update(testo1,canvas);
-      }
-    }
-    public void update(String testodascrivere,Canvas canvas){
-        int lunghezzatesto=testodascrivere.length();
+    public void update(String testodascrivere,int massimospazio,Canvas canvas){
 
-        if(i<=lunghezzatesto){
+        testodascrivere=testodascrivere.substring(nuovapartenza,testodascrivere.length());
 
-                String tasto=testodascrivere.substring(0,i+1);
-                Log.d("TASTO","tasto:"+tasto);
-                disegnatasto(tasto,canvas,false);
-                this.tastoMacchinaDaScrivere.start();
-                i+=1;
-            }
+        Log.d("TASTO","testodascrivere "+testodascrivere);
+       int lunghezzatesto=testodascrivere.length();
+
+      if (i<=lunghezzatesto){
+
+
+
+
+
+
+                              tasto=testodascrivere.substring(0,i+1);
+
+
+                    Log.d("TASTO","tasto:"+tasto);
+                    this.tastoMacchinaDaScrivere.start();
+                    if(i==1){
+                            Log.d("TASTO","i=1:"+tasto);
+                           disegnatasto(tasto,canvas,true);}
+                               else {
+                            disegnatasto(tasto,canvas,false);
+                               }
+                      float lunghezzainpixel= ConvertiLunghezzaStringInPixel.convertiStringLenToPixel(testodascrivere);
+
+                           if( testodascrivere.substring(i,i+1).equals("-")){
+                               //disegnatasto("?",canvas,true);
+                               disegnatasto(" ",canvas,true);
+                               Log.d("TASTO",testodascrivere.substring(i,i+1));
+                               nuovapartenza=i+2;
+                               i=0;
+                               ritornocarrello.start();
+                           }
+
+
+                    i+=1;}
+
+
+
+
 
 
 
@@ -66,11 +97,12 @@ public class MacchinaDaScrivereVecchia {
 
           }
           if(i>lunghezzatesto){
-              disegnatasto(testodascrivere,canvas,true);
-              i=1;
-              numerorighe=numerorighe+1;
+              disegnatasto(testodascrivere,canvas,false);
+              // i=1;
+
 
           }
+
 
         }
 
@@ -86,16 +118,22 @@ public class MacchinaDaScrivereVecchia {
        float misuraLarghezzaTasto=ConvertiLunghezzaStringInPixel.convertiStringLenToPixel(tasto);
        int larghezzatasto=(int)misuraLarghezzaTasto;
 
-           if(aumentariga){rigaY+=64;}
-               righe[numerorighe]=tasto;
+           if(aumentariga){rigaY+=64;
+                            numerorighe=numerorighe+1;
+                           }
+              righe[numerorighe]=tasto;
+              // Log.d("TASTO","numerorighe:"+numerorighe);
                int ciclo=numerorighe;
                int rigaciclo=rigaY;
                while (ciclo>0){
-                   rigaciclo-=64;
 
-                   canvas.drawText(righe[ciclo], 20, rigaciclo, mPaint);
-                   ciclo-=1;
-                   if(ciclo==-1){ciclo=0;}
+
+
+                       canvas.drawText(righe[ciclo], 20, rigaciclo, mPaint);
+                       rigaciclo-=64;
+                       if(rigaciclo<360){rigaciclo=360;}
+                        ciclo-=1;
+
                }
 
 
